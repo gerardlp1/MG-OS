@@ -67,6 +67,8 @@
 # git clone https://github.com/tu-usuari/MG-OS.git
 # Obrir el projecte amb Visual Studio
 # Executar-lo amb Cosmos (ISO o màquina virtual)
+# 📁 Estructura del projecte
+#
 # 🧪 Estat del projecte
 # 
 # 🚧 En desenvolupament
