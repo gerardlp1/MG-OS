@@ -27,6 +27,15 @@
 # 
 # Projecte desenvolupat dins l’àmbit formatiu d’ASIX.
 # 
+# 🛠️ Tecnologies utilitzades
+# 
+# - 💻 C#
+# - ⚙️ .NET
+# - 🧠 Cosmos OS Framework
+# - 🧪 Visual Studio
+# - 🗃️ Git i GitHub
+# - 🖥️ Màquina virtual (VMware / VirtualBox)
+# 
 # 🎯 Objectiu del projecte
 # 
 # Els objectius principals de MG-OS són:
@@ -153,6 +162,7 @@
 # Exemple:
 # ajuda
 # 
+# ![ajuda](./assets/imatge-ajuda-mg-os.png)
 # versio:
 # Mostra la versió actual de MG-OS.
 # 
