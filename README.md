@@ -89,4 +89,4 @@
 
 # 📜 Llicència
 
-# MIT License (o la que decidiu utilitzar)
+# MIT License
