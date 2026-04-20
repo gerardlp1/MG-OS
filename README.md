@@ -68,7 +68,17 @@
 # Obrir el projecte amb Visual Studio
 # Executar-lo amb Cosmos (ISO o màquina virtual)
 # 📁 Estructura del projecte
-#
+MG-OS/
+├── assets/
+│   ├── imatge-ajuda-mg-os.png
+│   ├── logoMG-OS.png
+│
+├── .gitignore
+├── Kernel.cs
+├── LICENSE
+├── MG-OS.sln
+├── README.md
+# 
 # 🧪 Estat del projecte
 # 
 # 🚧 En desenvolupament
