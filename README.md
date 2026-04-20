@@ -21,9 +21,9 @@
 # La interacció amb el maquinari
 # La gestió de processos bàsics
 # El funcionament d’una consola o interfície simple
-# 👥 Autors
-# MANEL SANCHEZ
-# GERARD LEIVA
+## 👥 Autors
+# - Manel Sanchez – desenvolupament del kernel
+# - Gerard Leiva – disseny del shell i comandes
 # 
 # Projecte desenvolupat dins l’àmbit formatiu d’ASIX.
 # 
