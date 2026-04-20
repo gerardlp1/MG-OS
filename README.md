@@ -153,6 +153,7 @@
 # Exemple:
 # ajuda
 # 
+# ![ajuda](./imatge-ajuda-mg-os.png)
 # versio:
 # Mostra la versió actual de MG-OS.
 # 
