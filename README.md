@@ -113,12 +113,17 @@ MG-OS/
 - Arrencada bàsica del sistema  
 - Sortida per consola  
 - Estructura inicial del kernel  
+- Sistema bàsic de comandes (shell)  
+- Comanda d’apagat del sistema  
+- Comanda de reinici del sistema  
+- Operacions aritmètiques bàsiques des del terminal  
 
 ### Millores previstes
 
-- Sistema de comandes  
-- Gestió de memòria bàsica  
-- Sistema de fitxers simple  
+- Gestió de memòria  
+- Sistema de fitxers  
+- Millora del sistema de comandes  
+- Interfície més avançada  
 
 ---
 
@@ -250,11 +255,55 @@ Reinicia el sistema.
 reinicia
 ```
 
-## 🗺️ Roadmap
+### 🧮 Operacions aritmètiques
 
+#### `suma`
+Suma dos nombres.
+
+```txt id="zns3n2"
+suma 5 3
+```
+
+#### `resta`
+Resta dos nombres.
+
+```txt id="zns3n2"
+resta 10 4
+```
+
+#### `mult`
+Multiplica dos nombres.
+
+```txt id="zns3n2"
+mult 6 2
+```
+
+#### `div`
+Divideix dos nombres.
+
+```txt id="zns3n2"
+div 8 2
+```
+
+#### `mod`
+Calcula el mòdul entre dos nombres.
+
+```txt id="zns3n2"
+mod 10 3
+```
+
+#### `arrel`
+Calcula l’arrel quadrada d’un nombre.
+
+```txt id="zns3n2"
+arrel 25
+```
+
+## 🗺️ Roadmap
 - [x] Arrencada del sistema
 - [x] Sortida per consola
-- [ ] Implementació del shell
-- [ ] Sistema de comandes
+- [x] Implementació inicial del shell
+- [x] Sistema bàsic de comandes
+- [x] Operacions aritmètiques bàsiques
 - [ ] Gestió de memòria
 - [ ] Sistema de fitxers
