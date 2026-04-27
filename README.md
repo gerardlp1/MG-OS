@@ -114,6 +114,19 @@ Aquesta configuració s’ha afegit dins de la funció `BeforeRun()` del kernel:
 Sys.KeyboardManager.SetKeyLayout(new Sys.ScanMaps.ESStandardLayout());
 ```
 
+## 💾 Sistema de fitxers
+
+MG-OS comença a implementar el sistema de fitxers seguint la guia oficial de Cosmos OS sobre VFS:
+
+https://cosmosos.github.io/articles/Kernel/VFS.html
+
+Per inicialitzar el sistema de fitxers, s’ha creat una instància de `CosmosVFS` i s’ha registrat amb `VFSManager` dins de la funció `BeforeRun()`:
+
+```csharp
+fs = new Sys.FileSystem.CosmosVFS();
+Sys.FileSystem.VFS.VFSManager.RegisterVFS(fs);
+```
+
 ## 🧪 Estat del projecte
 
 🚧 En desenvolupament
