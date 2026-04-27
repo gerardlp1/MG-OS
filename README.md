@@ -104,6 +104,16 @@ MG-OS/
 ├── MG-OS.sln
 ├── README.md
 
+## ⌨️ Configuració del teclat
+
+S’ha configurat el teclat de MG-OS amb la distribució espanyola/europea, ja que Cosmos OS utilitza per defecte el teclat americà.
+
+Aquesta configuració s’ha afegit dins de la funció `BeforeRun()` del kernel:
+
+```csharp
+Sys.KeyboardManager.SetKeyLayout(new Sys.ScanMaps.ESStandardLayout());
+```
+
 ## 🧪 Estat del projecte
 
 🚧 En desenvolupament
