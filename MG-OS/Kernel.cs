@@ -1,6 +1,10 @@
-﻿using System;
+﻿using Cosmos.HAL.Drivers.Audio;
+using Cosmos.System.Audio;
+using Cosmos.System.Audio.IO;
+using System;
 using System.IO;
 using Sys = Cosmos.System;
+using IL2CPU.API.Attribs;
 
 namespace MG_OS
 {
@@ -9,6 +13,21 @@ namespace MG_OS
         private Sys.FileSystem.CosmosVFS fs;
         private string directoriActual = @"0:\";
 
+        private AudioMixer mixer;
+        private AudioManager audioManager;
+        private bool audioDisponible = false;
+
+        //private const string SoInici = @"0:.\assets\audio\hola.wav";
+        //private const string SoCorrecte = @"0:.\assets\audio\fahh.wav";
+        //private const string SoError = @"0:.\assets\audio\bob.wav";
+
+        [ManifestResourceStream(ResourceName = "MG-OS.assets.audio.fahh.wav")]
+        static byte[] SoFahh;
+
+        static byte[] SoInici = SoFahh;
+        static byte[] SoCorrecte = SoFahh;
+        static byte[] SoError = SoFahh;
+
         protected override void BeforeRun()
         {
             Sys.KeyboardManager.SetKeyLayout(new Sys.ScanMaps.ESStandardLayout());
@@ -16,16 +35,23 @@ namespace MG_OS
             fs = new Sys.FileSystem.CosmosVFS();
             Sys.FileSystem.VFS.VFSManager.RegisterVFS(fs);
 
+            InicialitzarAudio();
+
             Console.Clear();
             Console.WriteLine("MG-OS iniciat correctament.");
             Console.WriteLine("Teclat configurat amb distribucio espanyola/europea.");
             Console.WriteLine("Sistema de fitxers inicialitzat.");
+            Console.WriteLine("Sistema d'audio inicialitzat.");
             Console.WriteLine("Escriu 'ajuda' per veure les comandes disponibles.");
             Console.WriteLine();
+
+            //ReproduirSo(SoFahh);
         }
 
         protected override void Run()
         {
+            //ReproduirSo(SoFahh);
+
             Console.Write("MG-OS " + directoriActual + "> ");
             string input = Console.ReadLine();
 
@@ -34,6 +60,7 @@ namespace MG_OS
 
             string[] parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             string comanda = parts[0].ToLower();
+            bool correcte = true;
 
             switch (comanda)
             {
@@ -51,70 +78,105 @@ namespace MG_OS
                     break;
 
                 case "diu":
-                    if (parts.Length > 1)
-                        Console.WriteLine(input.Substring(4));
-                    else
-                        Console.WriteLine("Escriu un text despres de 'diu'.");
+                    correcte = EscriureText(parts, input);
                     break;
 
                 case "llista":
-                    LlistarDirectori();
+                    correcte = LlistarDirectori();
                     break;
 
                 case "crea":
-                    CrearDirectori(parts);
+                    correcte = CrearDirectori(parts);
                     break;
 
                 case "entra":
-                    CanviarDirectori(parts);
+                    correcte = CanviarDirectori(parts);
                     break;
 
                 case "borra":
-                    EsborrarDirectori(parts);
+                    correcte = EsborrarDirectori(parts);
                     break;
 
                 case "mostra":
-                    MostrarFitxer(parts);
+                    correcte = MostrarFitxer(parts);
                     break;
 
                 case "suma":
-                    OperacioDosNombres(parts, "+");
+                    correcte = OperacioDosNombres(parts, "+");
                     break;
 
                 case "resta":
-                    OperacioDosNombres(parts, "-");
+                    correcte = OperacioDosNombres(parts, "-");
                     break;
 
                 case "mult":
-                    OperacioDosNombres(parts, "*");
+                    correcte = OperacioDosNombres(parts, "*");
                     break;
 
                 case "div":
-                    OperacioDosNombres(parts, "/");
+                    correcte = OperacioDosNombres(parts, "/");
                     break;
 
                 case "mod":
-                    OperacioDosNombres(parts, "%");
+                    correcte = OperacioDosNombres(parts, "%");
                     break;
 
                 case "arrel":
-                    ArrelQuadrada(parts);
+                    correcte = ArrelQuadrada(parts);
                     break;
 
                 case "apaga":
                     Console.WriteLine("Apagant MG-OS...");
+                    ReproduirSo(SoCorrecte);
                     Sys.Power.Shutdown();
                     break;
 
                 case "reinicia":
                     Console.WriteLine("Reiniciant MG-OS...");
+                    ReproduirSo(SoCorrecte);
                     Sys.Power.Reboot();
                     break;
 
                 default:
                     Console.WriteLine("Comanda no reconeguda.");
-                    break;
+                    ReproduirSo(SoError);
+                    return;
             }
+
+            if (correcte)
+                ReproduirSo(SoCorrecte);
+            else
+                ReproduirSo(SoError);
+        }
+
+        private void InicialitzarAudio()
+        {
+            try
+            {
+                mixer = new AudioMixer();
+
+                var driver = AC97.Initialize(bufferSize: 4096);
+
+                audioManager = new AudioManager()
+                {
+                    Stream = mixer,
+                    Output = driver
+                };
+
+                audioManager.Enable();
+                //audioDisponible = true;
+            }
+            catch
+            {
+                //audioDisponible = false;
+                Console.WriteLine("Avis: no s'ha pogut inicialitzar l'audio.");
+            }
+        }
+
+        private void ReproduirSo(byte[] file)
+        {
+            var audioStream = MemoryAudioStream.FromWave(file);
+            mixer.Streams.Add(audioStream);
         }
 
         private void MostrarAjuda()
@@ -139,6 +201,18 @@ namespace MG_OS
             Console.WriteLine("reinicia     - Reinicia el sistema");
         }
 
+        private bool EscriureText(string[] parts, string input)
+        {
+            if (parts.Length <= 1)
+            {
+                Console.WriteLine("Escriu un text despres de 'diu'.");
+                return false;
+            }
+
+            Console.WriteLine(input.Substring(4));
+            return true;
+        }
+
         private string RutaCompleta(string nom)
         {
             if (nom == "..")
@@ -150,7 +224,7 @@ namespace MG_OS
             return directoriActual + nom;
         }
 
-        private void LlistarDirectori()
+        private bool LlistarDirectori()
         {
             try
             {
@@ -167,19 +241,22 @@ namespace MG_OS
 
                 if (directoris.Length == 0 && fitxers.Length == 0)
                     Console.WriteLine("Directori buit.");
+
+                return true;
             }
             catch
             {
                 Console.WriteLine("Error: no s'ha pogut llistar el directori.");
+                return false;
             }
         }
 
-        private void CrearDirectori(string[] parts)
+        private bool CrearDirectori(string[] parts)
         {
             if (parts.Length != 2)
             {
                 Console.WriteLine("Format correcte: crea nom_directori");
-                return;
+                return false;
             }
 
             try
@@ -189,24 +266,26 @@ namespace MG_OS
                 if (Directory.Exists(ruta))
                 {
                     Console.WriteLine("Error: aquest directori ja existeix.");
-                    return;
+                    return false;
                 }
 
                 Directory.CreateDirectory(ruta);
                 Console.WriteLine("Directori creat: " + ruta);
+                return true;
             }
             catch
             {
                 Console.WriteLine("Error: no s'ha pogut crear el directori.");
+                return false;
             }
         }
 
-        private void CanviarDirectori(string[] parts)
+        private bool CanviarDirectori(string[] parts)
         {
             if (parts.Length != 2)
             {
                 Console.WriteLine("Format correcte: entra nom_directori");
-                return;
+                return false;
             }
 
             try
@@ -225,7 +304,7 @@ namespace MG_OS
                     }
 
                     Console.WriteLine("Directori actual: " + directoriActual);
-                    return;
+                    return true;
                 }
 
                 string ruta = RutaCompleta(parts[1]);
@@ -236,24 +315,26 @@ namespace MG_OS
                 if (!Directory.Exists(ruta))
                 {
                     Console.WriteLine("Error: el directori no existeix.");
-                    return;
+                    return false;
                 }
 
                 directoriActual = ruta;
                 Console.WriteLine("Directori actual: " + directoriActual);
+                return true;
             }
             catch
             {
                 Console.WriteLine("Error: no s'ha pogut canviar de directori.");
+                return false;
             }
         }
 
-        private void EsborrarDirectori(string[] parts)
+        private bool EsborrarDirectori(string[] parts)
         {
             if (parts.Length != 2)
             {
                 Console.WriteLine("Format correcte: borra nom_directori");
-                return;
+                return false;
             }
 
             try
@@ -263,24 +344,26 @@ namespace MG_OS
                 if (!Directory.Exists(ruta))
                 {
                     Console.WriteLine("Error: el directori no existeix.");
-                    return;
+                    return false;
                 }
 
                 Directory.Delete(ruta);
                 Console.WriteLine("Directori esborrat: " + ruta);
+                return true;
             }
             catch
             {
                 Console.WriteLine("Error: no s'ha pogut esborrar el directori. Potser no esta buit.");
+                return false;
             }
         }
 
-        private void MostrarFitxer(string[] parts)
+        private bool MostrarFitxer(string[] parts)
         {
             if (parts.Length != 2)
             {
                 Console.WriteLine("Format correcte: mostra nom_fitxer");
-                return;
+                return false;
             }
 
             try
@@ -290,29 +373,31 @@ namespace MG_OS
                 if (!File.Exists(ruta))
                 {
                     Console.WriteLine("Error: el fitxer no existeix.");
-                    return;
+                    return false;
                 }
 
                 Console.WriteLine(File.ReadAllText(ruta));
+                return true;
             }
             catch
             {
                 Console.WriteLine("Error: no s'ha pogut llegir el fitxer.");
+                return false;
             }
         }
 
-        private void OperacioDosNombres(string[] parts, string tipus)
+        private bool OperacioDosNombres(string[] parts, string tipus)
         {
             if (parts.Length != 3)
             {
                 Console.WriteLine("Format correcte: comanda nombre nombre");
-                return;
+                return false;
             }
 
             if (!double.TryParse(parts[1], out double a) || !double.TryParse(parts[2], out double b))
             {
                 Console.WriteLine("Has d'introduir nombres valids.");
-                return;
+                return false;
             }
 
             switch (tipus)
@@ -320,48 +405,59 @@ namespace MG_OS
                 case "+":
                     Console.WriteLine("Resultat: " + (a + b));
                     break;
+
                 case "-":
                     Console.WriteLine("Resultat: " + (a - b));
                     break;
+
                 case "*":
                     Console.WriteLine("Resultat: " + (a * b));
                     break;
+
                 case "/":
                     if (b == 0)
+                    {
                         Console.WriteLine("Error: no es pot dividir per zero.");
-                    else
-                        Console.WriteLine("Resultat: " + (a / b));
+                        return false;
+                    }
+                    Console.WriteLine("Resultat: " + (a / b));
                     break;
+
                 case "%":
                     if (b == 0)
+                    {
                         Console.WriteLine("Error: no es pot fer modul amb zero.");
-                    else
-                        Console.WriteLine("Resultat: " + (a % b));
+                        return false;
+                    }
+                    Console.WriteLine("Resultat: " + (a % b));
                     break;
             }
+
+            return true;
         }
 
-        private void ArrelQuadrada(string[] parts)
+        private bool ArrelQuadrada(string[] parts)
         {
             if (parts.Length != 2)
             {
                 Console.WriteLine("Format correcte: arrel nombre");
-                return;
+                return false;
             }
 
             if (!double.TryParse(parts[1], out double x))
             {
                 Console.WriteLine("Has d'introduir un nombre valid.");
-                return;
+                return false;
             }
 
             if (x < 0)
             {
                 Console.WriteLine("Error: no es pot calcular l'arrel d'un nombre negatiu.");
-                return;
+                return false;
             }
 
             Console.WriteLine("Resultat: " + Math.Sqrt(x));
+            return true;
         }
     }
 }
