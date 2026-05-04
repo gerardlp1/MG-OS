@@ -2,7 +2,7 @@
 
 Sistema operatiu educatiu desenvolupat amb Cosmos per aprendre com funciona un SO des de dins.
 
-![Logo MG-OS](assets/logoMG-OS.png)
+![Logo MG-OS](./assets/logoMG-OS.png)
 
 ---
 
@@ -96,8 +96,11 @@ MG-OS/
 │   ├── imatge-ajuda-mg-os.png
 │   ├── logoMG-OS.png
 │
-├── src/
-│   └── Kernel.cs
+├── MG-OS/ 
+│   ├── bin/
+│   ├── obj/
+│   ├── Kernel.cs
+│   ├── MG-OS.csproj
 │
 ├── .gitignore
 ├── LICENSE
@@ -275,6 +278,9 @@ Mostra les comandes disponibles.
 ```txt id="zns3n2"
 ajuda
 ```
+
+![Imatge ajuda](./assets/imatge-ajuda-mg-os.png)
+
 
 #### `versio`
 Mostra la versió del sistema.
