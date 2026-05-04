@@ -127,19 +127,50 @@ fs = new Sys.FileSystem.CosmosVFS();
 Sys.FileSystem.VFS.VFSManager.RegisterVFS(fs);
 ```
 
+## 🔊 Sistema de so
+
+MG-OS incorpora una funcionalitat bàsica de so utilitzant el PC Speaker de Cosmos OS.
+
+S'han implementat diferents sons per millorar la interacció amb l'usuari:
+
+### 🔈 Sons implementats
+
+- 🔊 **Inici del sistema**  
+  Es reprodueix un doble beep quan el sistema operatiu arrenca correctament.
+
+- ✅ **Comanda correcta**  
+  Es reprodueix un beep agut quan l'usuari introdueix una comanda vàlida.
+
+- ❌ **Error**  
+  Es reprodueix un beep greu quan la comanda no és reconeguda o hi ha un error.
+
+### ⚙️ Implementació
+
+Els sons s'han implementat mitjançant la classe `PCSpeaker` de Cosmos:
+
+```csharp
+Cosmos.System.PCSpeaker.Beep(freq, durada);
+```
+
 ## 🧪 Estat del projecte
 
 🚧 En desenvolupament
 
 ### Funcionalitats actuals
 
-- Arrencada bàsica del sistema  
+- Arrencada basica del sistema  
 - Sortida per consola  
 - Estructura inicial del kernel  
-- Sistema bàsic de comandes (shell)  
-- Comanda d’apagat del sistema  
+- Sistema basic de comandes (shell)  
+- Comanda d'apagat del sistema  
 - Comanda de reinici del sistema  
-- Operacions aritmètiques bàsiques des del terminal  
+- Operacions aritmetiques basiques des del terminal  
+- Sistema de fitxers inicial (llista, crea, entra, borra, mostra)  
+- Configuracio del teclat amb distribucio espanyola/europea  
+- Sistema de so amb PC Speaker:
+  - So d'inici del sistema  
+  - So en comandes correctes  
+  - So en errors  
 
 ### Millores previstes
 
