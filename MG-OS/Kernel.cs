@@ -1,9 +1,13 @@
-﻿using System;
-using System.IO;
-using System.Drawing;
-using Sys = Cosmos.System;
+﻿using Cosmos.HAL;
 using Cosmos.System.Graphics;
 using Cosmos.System.Graphics.Fonts;
+using Cosmos.System.Network;
+using Cosmos.System.Network.Config;
+using Cosmos.System.Network.IPv4;
+using System;
+using System.Drawing;
+using System.IO;
+using Sys = Cosmos.System;
 
 namespace MG_OS
 {
@@ -16,6 +20,15 @@ namespace MG_OS
         private Canvas canvas;
         private string[] sortida = new string[14];
         private string ultimaComanda = "";
+
+        // ================= CONFIGURACIO XARXA =================
+
+        private bool xarxaConfigurada = false;
+
+        // Canvia aquests valors segons la teva xarxa real.
+        private const string IP_TEXT = "192.168.1.69";
+        private const string MASK_TEXT = "255.255.255.0";
+        private const string GATEWAY_TEXT = "192.168.1.1";
 
         protected override void BeforeRun()
         {
@@ -32,6 +45,9 @@ namespace MG_OS
             AfegirSortida("MG-OS iniciat correctament.");
             AfegirSortida("Teclat configurat amb distribucio espanyola/europea.");
             AfegirSortida("Sistema de fitxers inicialitzat.");
+
+            ConfigurarXarxa();
+
             AfegirSortida("Escriu 'ajuda' per veure les comandes.");
 
             DibuixarInterficieAmbInput("");
@@ -71,6 +87,8 @@ namespace MG_OS
                 }
             }
         }
+
+        // ================= GRAFICS =================
 
         private void MostrarBenvinguda()
         {
@@ -138,6 +156,8 @@ namespace MG_OS
             sortida[sortida.Length - 1] = text;
         }
 
+        // ================= EXECUCIO COMANDES =================
+
         private void ExecutarComanda(string input, bool guardar)
         {
             string[] parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -175,6 +195,18 @@ namespace MG_OS
 
                 case "historial":
                     MostrarHistorial();
+                    break;
+
+                case "ip":
+                    correcta = MostrarIP();
+                    break;
+
+                case "xarxa":
+                    MostrarXarxa();
+                    break;
+
+                case "ftp":
+                    correcta = PrepararFTP();
                     break;
 
                 case "llista":
@@ -247,6 +279,106 @@ namespace MG_OS
                 BeepError();
         }
 
+        // ================= XARXA =================
+
+        private void ConfigurarXarxa()
+        {
+            try
+            {
+                NetworkDevice nic = NetworkDevice.GetDeviceByName("eth0");
+
+                IPConfig.Enable(
+                    nic,
+                    new Address(192, 168, 1, 69),
+                    new Address(255, 255, 255, 0),
+                    new Address(192, 168, 1, 1)
+                );
+
+                xarxaConfigurada = true;
+
+                AfegirSortida("Xarxa configurada correctament.");
+                AfegirSortida("IP estatica: " + IP_TEXT);
+            }
+            catch
+            {
+                xarxaConfigurada = false;
+                AfegirSortida("Avis: no s'ha pogut configurar la xarxa.");
+            }
+        }
+
+        private bool MostrarIP()
+        {
+            try
+            {
+                if (!xarxaConfigurada)
+                {
+                    AfegirSortida("Xarxa no configurada.");
+                    return false;
+                }
+
+                AfegirSortida("IP actual: " + NetworkConfiguration.CurrentAddress.ToString());
+                return true;
+            }
+            catch
+            {
+                AfegirSortida("Error: no s'ha pogut obtenir la IP.");
+                return false;
+            }
+        }
+
+        private void MostrarXarxa()
+        {
+            AfegirSortida("Configuracio de xarxa:");
+            AfegirSortida("IP: " + IP_TEXT);
+            AfegirSortida("Mascara:");
+            AfegirSortida("255.255.255.0");
+            AfegirSortida("Gateway: " + GATEWAY_TEXT);
+
+            if (xarxaConfigurada)
+                AfegirSortida("Estat: configurada");
+            else
+                AfegirSortida("Estat: no configurada");
+        }
+
+        private bool PrepararFTP()
+        {
+            if (!xarxaConfigurada)
+            {
+                AfegirSortida("Error: la xarxa no esta configurada.");
+                return false;
+            }
+
+            AfegirSortida("FTP preparat.");
+            AfegirSortida("Directori publicat: 0:\\");
+            AfegirSortida("Host: " + IP_TEXT);
+            AfegirSortida("FileZilla: FTP plain");
+            AfegirSortida("Usuari: anonymous");
+            AfegirSortida("Mode: active");
+
+            return true;
+        }
+
+        /*
+         * Per activar el servidor FTP real:
+         *
+         * 1. Instal·la el paquet NuGet:
+         *    CosmosFtpServer 1.0.9
+         *
+         * 2. Afegeix el using corresponent segons el paquet.
+         *
+         * 3. Substitueix PrepararFTP() per una versio que faci:
+         *
+         *    using (var xServer = new FtpServer(fs, "0:\\"))
+         *    {
+         *        FtpServer.Listen();
+         *    }
+         *
+         * Segons la guia oficial, Cosmos FTP accepta una connexio i el client
+         * ha d'utilitzar FTP pla, connexio anonima i mode actiu.
+         */
+
+        // ================= AUDIO =================
+
         private void BeepInici()
         {
             try
@@ -275,11 +407,14 @@ namespace MG_OS
             catch { }
         }
 
+        // ================= AJUDA I HISTORIAL =================
+
         private void MostrarAjuda()
         {
             AfegirSortida("Comandes disponibles:");
             AfegirSortida("ajuda, versio, net, diu [text]");
             AfegirSortida("historial, repeteix [n]");
+            AfegirSortida("ip, xarxa, ftp");
             AfegirSortida("llista, crea [dir], entra [dir]");
             AfegirSortida("borra [dir], mostra [fit]");
             AfegirSortida("suma, resta, mult, div, mod, arrel");
@@ -368,6 +503,8 @@ namespace MG_OS
             AfegirSortida(input.Substring(4));
             return true;
         }
+
+        // ================= SISTEMA DE FITXERS =================
 
         private string RutaCompleta(string nom)
         {
@@ -507,6 +644,8 @@ namespace MG_OS
                 return false;
             }
         }
+
+        // ================= MATEMATIQUES =================
 
         private bool OperacioDosNombres(string[] parts, string tipus)
         {

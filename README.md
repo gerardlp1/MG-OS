@@ -14,6 +14,9 @@ Sistema operatiu educatiu desenvolupat amb Cosmos per aprendre com funciona un S
   - Gestió de memòria
   - Entrada/sortida (I/O)
   - Interacció amb el maquinari bàsic
+  - Sistema de fitxers
+  - Xarxa
+  - Interfície gràfica
 - 📚 Ideal per iniciar-se en el desenvolupament de sistemes operatius
 - 🚀 Projecte open-source en evolució
 
@@ -27,8 +30,10 @@ Aquest projecte no pretén competir amb sistemes com Windows o Linux, sinó serv
 
 - El procés d’arrencada d’un sistema operatiu
 - La interacció amb el maquinari
-- La gestió de processos bàsics
-- El funcionament d’una consola o interfície simple
+- El funcionament d’un shell de comandes
+- El sistema de fitxers
+- La configuració de xarxa
+- La creació d’una interfície gràfica amb Cosmos CGS
 
 ---
 
@@ -46,9 +51,13 @@ Projecte desenvolupat dins l’àmbit formatiu d’ASIX.
 - 💻 C#
 - ⚙️ .NET
 - 🧠 Cosmos OS Framework
+- 🎨 Cosmos Graphic Subsystem (CGS)
+- 💾 Cosmos VFS
+- 🌐 Cosmos Network
+- 🔊 PC Speaker
 - 🧪 Visual Studio
 - 🗃️ Git i GitHub
-- 🖥️ Màquina virtual (VMware / VirtualBox)
+- 🖥️ Màquina virtual VMware / VirtualBox
 
 ---
 
@@ -59,13 +68,15 @@ Els objectius principals de MG-OS són:
 - Aprendre el desenvolupament de sistemes operatius
 - Practicar programació en C# a baix nivell
 - Entendre el funcionament intern d’un SO
+- Crear un shell propi amb comandes bàsiques
+- Treballar amb fitxers, gràfics, so i xarxa
 - Crear una base per a futurs experiments i millores
 
 ---
 
 ## 🚀 Execució
 
-Exemple bàsic de funcionament:
+Exemple bàsic de funcionament del kernel:
 
 ```csharp
 public override void Run()
@@ -74,6 +85,10 @@ public override void Run()
 }
 ```
 
+Actualment, MG-OS ja no funciona només amb consola clàssica, sinó que utilitza una interfície gràfica amb Cosmos CGS i entrada de text en temps real.
+
+---
+
 ## ⬇️ Instal·lació
 
 ### 🔧 Requisits
@@ -81,6 +96,7 @@ public override void Run()
 - Visual Studio  
 - .NET compatible amb Cosmos  
 - Cosmos User Kit  
+- VMware o VirtualBox  
 
 ### 📦 Passos
 
@@ -91,12 +107,21 @@ public override void Run()
 git clone https://github.com/tu-usuari/MG-OS.git
 ```
 
+3. Obrir el projecte amb Visual Studio  
+4. Compilar el projecte  
+5. Executar-lo amb Cosmos en una màquina virtual  
+
+---
+
+## 📁 Estructura del projecte
+
+```txt
 MG-OS/
 ├── assets/
 │   ├── imatge-ajuda-mg-os.png
 │   ├── logoMG-OS.png
 │
-├── MG-OS/ 
+├── MG-OS/
 │   ├── bin/
 │   ├── obj/
 │   ├── Kernel.cs
@@ -106,6 +131,9 @@ MG-OS/
 ├── LICENSE
 ├── MG-OS.sln
 ├── README.md
+```
+
+---
 
 ## ⌨️ Configuració del teclat
 
@@ -117,9 +145,11 @@ Aquesta configuració s’ha afegit dins de la funció `BeforeRun()` del kernel:
 Sys.KeyboardManager.SetKeyLayout(new Sys.ScanMaps.ESStandardLayout());
 ```
 
+---
+
 ## 💾 Sistema de fitxers
 
-MG-OS comença a implementar el sistema de fitxers seguint la guia oficial de Cosmos OS sobre VFS:
+MG-OS implementa un sistema de fitxers inicial seguint la guia oficial de Cosmos OS sobre VFS:
 
 https://cosmosos.github.io/articles/Kernel/VFS.html
 
@@ -130,11 +160,22 @@ fs = new Sys.FileSystem.CosmosVFS();
 Sys.FileSystem.VFS.VFSManager.RegisterVFS(fs);
 ```
 
+### Comandes de fitxers implementades
+
+- `llista` → mostra el contingut del directori actual
+- `crea [directori]` → crea un directori nou
+- `entra [directori]` → canvia de directori
+- `entra ..` → torna al directori arrel
+- `borra [directori]` → elimina un directori buit
+- `mostra [fitxer]` → mostra el contingut d’un fitxer
+
+---
+
 ## 🔊 Sistema de so
 
 MG-OS incorpora una funcionalitat bàsica de so utilitzant el PC Speaker de Cosmos OS.
 
-S'han implementat diferents sons per millorar la interacció amb l'usuari:
+S’han implementat diferents sons per millorar la interacció amb l’usuari:
 
 ### 🔈 Sons implementats
 
@@ -142,47 +183,130 @@ S'han implementat diferents sons per millorar la interacció amb l'usuari:
   Es reprodueix un doble beep quan el sistema operatiu arrenca correctament.
 
 - ✅ **Comanda correcta**  
-  Es reprodueix un beep agut quan l'usuari introdueix una comanda vàlida.
+  Es reprodueix un beep agut quan l’usuari introdueix una comanda vàlida.
 
 - ❌ **Error**  
   Es reprodueix un beep greu quan la comanda no és reconeguda o hi ha un error.
 
 ### ⚙️ Implementació
 
-Els sons s'han implementat mitjançant la classe `PCSpeaker` de Cosmos:
+Els sons s’han implementat mitjançant la classe `PCSpeaker` de Cosmos:
 
 ```csharp
 Cosmos.System.PCSpeaker.Beep(freq, durada);
 ```
 
-## 🧠 Memoria de comandes
+---
 
-MG-OS incorpora una memoria de comandes que permet guardar les ultimes cinc comandes executades.
+## 🧠 Memòria de comandes
 
-Aquesta funcionalitat facilita recuperar ordres utilitzades anteriorment i tornar-les a executar sense haver-les d'escriure completament.
+MG-OS incorpora una memòria de comandes que permet guardar les últimes cinc comandes executades.
+
+Aquesta funcionalitat facilita recuperar ordres utilitzades anteriorment i tornar-les a executar sense haver-les d’escriure completament.
 
 ### Comandes afegides
 
 #### `historial`
-Mostra les ultimes cinc comandes executades.
+
+Mostra les últimes cinc comandes executades.
 
 ```txt
 historial
 ```
 
+#### `repeteix`
+
+Permet tornar a executar una comanda anterior indicant el seu número dins de l’historial.
+
+```txt
+repeteix 1
+```
+
+---
+
 ## 🎨 Interfície gràfica amb Cosmos CGS
 
 MG-OS ha evolucionat d’una consola simple a una interfície gràfica utilitzant Cosmos Graphic Subsystem (CGS).
 
-S’ha implementat un sistema visual basat en canvas que permet dibuixar elements gràfics com:
+S’ha implementat un sistema visual basat en `Canvas` que permet dibuixar elements gràfics com:
 
 - Fons amb colors personalitzats
 - Finestres i contenidors amb rectangles
 - Text renderitzat sobre pantalla
-- Interfície estructurada (header, sortida, input)
+- Pantalla de benvinguda gràfica
+- Capçalera amb nom del sistema, ruta i versió
+- Zona de sortida del sistema
+- Zona d’entrada de comandes
 
 Guia oficial utilitzada:
+
 https://cosmosos.github.io/articles/Kernel/CGS.html
+
+---
+
+## ⌨️ Input interactiu en temps real
+
+El sistema ja no depèn només de `Console.ReadLine()`, sinó que captura les tecles amb `Console.ReadKey()`.
+
+Això permet:
+
+- Visualitzar el text mentre s’escriu
+- Esborrar amb Backspace
+- Executar comandes amb Enter
+- Simular el comportament d’una terminal real dins de la interfície gràfica
+
+---
+
+## 🌐 Xarxa i FTP
+
+MG-OS incorpora una configuració inicial de xarxa seguint la guia oficial de Cosmos OS:
+
+https://cosmosos.github.io/articles/Kernel/Network.html
+
+S’ha configurat una adreça IP estàtica per a la màquina virtual:
+
+```txt
+IP: 192.168.1.69
+Mascara: 255.255.255.0
+Gateway: 192.168.1.1
+```
+
+### Comandes de xarxa
+
+#### `xarxa`
+
+Mostra la configuració completa de xarxa.
+
+```txt
+xarxa
+```
+
+#### `ip`
+
+Mostra l’adreça IP actual del sistema.
+
+```txt
+ip
+```
+
+#### `ftp`
+
+Mostra la configuració necessària per accedir al directori publicat mitjançant FTP.
+
+```txt
+ftp
+```
+
+### Configuració recomanada per FileZilla
+
+- Protocol: FTP
+- Xifratge: FTP plain
+- Usuari: anonymous
+- Mode: active
+- Host: 192.168.1.69
+- Directori publicat: `0:\`
+
+---
 
 ## 🧪 Estat del projecte
 
@@ -192,20 +316,29 @@ https://cosmosos.github.io/articles/Kernel/CGS.html
 
 - Arrencada del sistema  
 - Interfície gràfica amb Cosmos CGS  
-- Sistema de comandes (shell)  
+- Pantalla de benvinguda gràfica  
+- Sistema de comandes shell  
 - Input en temps real  
 - Sistema de fitxers bàsic  
 - Operacions aritmètiques  
 - Historial de comandes  
-- Sistema de so (beeps)  
+- Recuperació i repetició de comandes anteriors  
+- Sistema de so amb PC Speaker  
+- Configuració del teclat espanyol/europeu  
+- Configuració de xarxa amb IP estàtica  
+- Comanda `ip` per mostrar l’adreça IP  
+- Comanda `xarxa` per mostrar la configuració de xarxa  
+- Preparació de directori per FTP  
 - Apagat i reinici del sistema  
 
 ### Millores previstes
 
+- Millora del sistema de fitxers  
+- Implementació completa del servidor FTP  
 - Gestió de memòria  
-- Sistema de fitxers  
-- Millora del sistema de comandes  
-- Interfície més avançada  
+- Millora visual de la interfície gràfica  
+- Afegir més informació del sistema  
+- Millora de la navegació entre directoris  
 
 ---
 
@@ -232,9 +365,11 @@ Si estàs començant en sistemes operatius, aquest projecte et pot ajudar a ente
 
 Aquest projecte està sota la llicència MIT.
 
-## 🖥️ Comandes inicials del shell de MG-OS
+---
 
-Per al disseny del shell mínim de MG-OS, s’ha definit un conjunt de comandes bàsiques orientades a un ús senzill del sistema operatiu.
+## 🖥️ Comandes del shell de MG-OS
+
+Per al disseny del shell de MG-OS, s’ha definit un conjunt de comandes bàsiques orientades a un ús senzill del sistema operatiu.
 
 S’han escollit noms curts i clars, evitant copiar directament les comandes de Linux.
 
@@ -243,152 +378,227 @@ S’han escollit noms curts i clars, evitant copiar directament les comandes de 
 ### 📁 Gestió de fitxers i directoris
 
 #### `llista`
+
 Mostra el contingut del directori actual.
 
-```txt id="zns3n2"
+```txt
 llista
 ```
 
 #### `entra`
+
 Canvia el directori actual.
 
-```txt id="zns3n2"
+```txt
 entra documents
 ```
 
+També permet tornar al directori arrel:
+
+```txt
+entra ..
+```
+
 #### `crea`
+
 Crea un directori nou.
 
-```txt id="zns3n2"
+```txt
 crea projecte
 ```
 
 #### `borra`
-Elimina un directori (buit).
 
-```txt id="zns3n2"
+Elimina un directori buit.
+
+```txt
 borra proves
 ```
 
 #### `mostra`
+
 Mostra el contingut d’un fitxer.
 
-```txt id="zns3n2"
+```txt
 mostra notes.txt
 ```
+
+---
 
 ### ⚙️ Informació del sistema
 
 #### `ajuda`
+
 Mostra les comandes disponibles.
 
-```txt id="zns3n2"
+```txt
 ajuda
 ```
 
 ![Imatge ajuda](./assets/imatge-ajuda-mg-os.png)
 
-
 #### `versio`
+
 Mostra la versió del sistema.
 
-```txt id="zns3n2"
+```txt
 versio
 ```
 
-#### `mem`
-Mostra la memòria disponible.
+---
 
-```txt id="zns3n2"
-mem
+### 🌐 Xarxa
+
+#### `ip`
+
+Mostra l’adreça IP actual del sistema.
+
+```txt
+ip
 ```
 
-#### `temps`
-Mostra el temps de funcionament.
+#### `xarxa`
 
-```txt id="zns3n2"
-temps
+Mostra la configuració de xarxa.
+
+```txt
+xarxa
 ```
+
+#### `ftp`
+
+Mostra la configuració FTP preparada per accedir al directori publicat.
+
+```txt
+ftp
+```
+
+---
+
+### 🧠 Historial de comandes
+
+#### `historial`
+
+Mostra les últimes cinc comandes executades.
+
+```txt
+historial
+```
+
+#### `repeteix`
+
+Executa una comanda anterior de l’historial.
+
+```txt
+repeteix 1
+```
+
+---
 
 ### 🧰 Útils
 
 #### `net`
-Neteja la pantalla.
 
-```txt id="zns3n2"
+Neteja la pantalla o la zona de sortida.
+
+```txt
 net
 ```
 
 #### `diu`
+
 Mostra text per pantalla.
 
-```txt id="zns3n2"
+```txt
 diu Hola MG-OS
 ```
 
 #### `apaga`
+
 Apaga el sistema.
 
-```txt id="zns3n2"
+```txt
 apaga
 ```
 
 #### `reinicia`
+
 Reinicia el sistema.
 
-```txt id="zns3n2"
+```txt
 reinicia
 ```
+
+---
 
 ### 🧮 Operacions aritmètiques
 
 #### `suma`
+
 Suma dos nombres.
 
-```txt id="zns3n2"
+```txt
 suma 5 3
 ```
 
 #### `resta`
+
 Resta dos nombres.
 
-```txt id="zns3n2"
+```txt
 resta 10 4
 ```
 
 #### `mult`
+
 Multiplica dos nombres.
 
-```txt id="zns3n2"
+```txt
 mult 6 2
 ```
 
 #### `div`
+
 Divideix dos nombres.
 
-```txt id="zns3n2"
+```txt
 div 8 2
 ```
 
 #### `mod`
+
 Calcula el mòdul entre dos nombres.
 
-```txt id="zns3n2"
+```txt
 mod 10 3
 ```
 
 #### `arrel`
+
 Calcula l’arrel quadrada d’un nombre.
 
-```txt id="zns3n2"
+```txt
 arrel 25
 ```
 
+---
+
 ## 🗺️ Roadmap
+
 - [x] Arrencada del sistema
 - [x] Sortida per consola
 - [x] Implementació inicial del shell
 - [x] Sistema bàsic de comandes
 - [x] Operacions aritmètiques bàsiques
+- [x] Configuració del teclat
+- [x] Sistema de fitxers inicial
+- [x] Sistema de so
+- [x] Memòria de comandes
+- [x] Interfície gràfica amb Cosmos CGS
+- [x] Input en temps real
+- [x] Configuració de xarxa
+- [x] Comandes `ip`, `xarxa` i `ftp`
 - [ ] Gestió de memòria
-- [ ] Sistema de fitxers
+- [ ] Servidor FTP complet
+- [ ] Millora del sistema de fitxers
+- [ ] Millora visual de la interfície
