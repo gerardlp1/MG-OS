@@ -133,6 +133,7 @@ namespace MG_OS
         }
 
         // ================= AUDIO =================
+
         private void BeepInici()
         {
             try
@@ -162,6 +163,7 @@ namespace MG_OS
         }
 
         // ================= SISTEMA =================
+
         private void MostrarAjuda()
         {
             Console.WriteLine("Comandes disponibles:");
