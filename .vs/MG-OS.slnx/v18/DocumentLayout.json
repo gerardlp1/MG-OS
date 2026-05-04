@@ -3,8 +3,8 @@
   "WorkspaceRootPath": "C:\\Users\\User\\Desktop\\ASIX2\\0179-Angles\\RepoCosmos\\MG-OS\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{69F2D222-9CA9-4B1B-AD76-51D4F803301E}|MG-OS\\MG-OS.csproj|c:\\users\\user\\desktop\\asix2\\0179-angles\\repocosmos\\mg-os\\mg-os\\kernel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{69F2D222-9CA9-4B1B-AD76-51D4F803301E}|MG-OS\\MG-OS.csproj|solutionrelative:mg-os\\kernel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{2E97764E-121E-C151-8DDF-B3EC431BBF92}|MG-OS\\MG-OS.csproj|c:\\users\\user\\desktop\\asix2\\0179-angles\\repocosmos\\mg-os\\mg-os\\kernel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2E97764E-121E-C151-8DDF-B3EC431BBF92}|MG-OS\\MG-OS.csproj|solutionrelative:mg-os\\kernel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -24,7 +24,7 @@
               "RelativeDocumentMoniker": "MG-OS\\Kernel.cs",
               "ToolTip": "C:\\Users\\User\\Desktop\\ASIX2\\0179-Angles\\RepoCosmos\\MG-OS\\MG-OS\\Kernel.cs",
               "RelativeToolTip": "MG-OS\\Kernel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-04T15:09:17.544Z",
               "EditorCaption": ""
