@@ -152,6 +152,21 @@ Els sons s'han implementat mitjançant la classe `PCSpeaker` de Cosmos:
 Cosmos.System.PCSpeaker.Beep(freq, durada);
 ```
 
+## 🧠 Memoria de comandes
+
+MG-OS incorpora una memoria de comandes que permet guardar les ultimes cinc comandes executades.
+
+Aquesta funcionalitat facilita recuperar ordres utilitzades anteriorment i tornar-les a executar sense haver-les d'escriure completament.
+
+### Comandes afegides
+
+#### `historial`
+Mostra les ultimes cinc comandes executades.
+
+```txt
+historial
+```
+
 ## 🧪 Estat del projecte
 
 🚧 En desenvolupament
@@ -171,6 +186,9 @@ Cosmos.System.PCSpeaker.Beep(freq, durada);
   - So d'inici del sistema  
   - So en comandes correctes  
   - So en errors  
+- Comanda `net` per netejar la pantalla  
+- Memoria de les ultimes cinc comandes executades  
+- Recuperacio i reexecucio de comandes anteriors  
 
 ### Millores previstes
 

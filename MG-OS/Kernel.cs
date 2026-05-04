@@ -9,6 +9,9 @@ namespace MG_OS
         private Sys.FileSystem.CosmosVFS fs;
         private string directoriActual = @"0:\";
 
+        // Guarda les ultimes 5 comandes executades
+        private string[] historial = new string[5];
+
         protected override void BeforeRun()
         {
             Sys.KeyboardManager.SetKeyLayout(new Sys.ScanMaps.ESStandardLayout());
@@ -34,10 +37,25 @@ namespace MG_OS
             if (string.IsNullOrWhiteSpace(input))
                 return;
 
+            ExecutarComanda(input, true);
+        }
+
+        private void ExecutarComanda(string input, bool guardar)
+        {
             string[] parts = input.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             string comanda = parts[0].ToLower();
 
             bool comandaCorrecta = true;
+
+            // La comanda repeteix no es guarda directament per evitar bucles estranys
+            if (comanda == "repeteix")
+            {
+                RepetirComanda(parts);
+                return;
+            }
+
+            if (guardar)
+                GuardarComanda(input);
 
             switch (comanda)
             {
@@ -62,6 +80,10 @@ namespace MG_OS
                         Console.WriteLine("Escriu un text despres de 'diu'.");
                         comandaCorrecta = false;
                     }
+                    break;
+
+                case "historial":
+                    MostrarHistorial();
                     break;
 
                 case "llista":
@@ -132,6 +154,73 @@ namespace MG_OS
                 BeepError();
         }
 
+        // ================= HISTORIAL =================
+
+        private void GuardarComanda(string comanda)
+        {
+            for (int i = historial.Length - 1; i > 0; i--)
+            {
+                historial[i] = historial[i - 1];
+            }
+
+            historial[0] = comanda;
+        }
+
+        private void MostrarHistorial()
+        {
+            Console.WriteLine("Ultimes comandes:");
+
+            bool buit = true;
+
+            for (int i = 0; i < historial.Length; i++)
+            {
+                if (!string.IsNullOrWhiteSpace(historial[i]))
+                {
+                    Console.WriteLine((i + 1) + " - " + historial[i]);
+                    buit = false;
+                }
+            }
+
+            if (buit)
+                Console.WriteLine("Encara no hi ha comandes guardades.");
+        }
+
+        private void RepetirComanda(string[] parts)
+        {
+            if (parts.Length != 2)
+            {
+                Console.WriteLine("Format correcte: repeteix numero");
+                BeepError();
+                return;
+            }
+
+            if (!int.TryParse(parts[1], out int numero))
+            {
+                Console.WriteLine("Has d'introduir un numero valid.");
+                BeepError();
+                return;
+            }
+
+            if (numero < 1 || numero > 5)
+            {
+                Console.WriteLine("El numero ha d'estar entre 1 i 5.");
+                BeepError();
+                return;
+            }
+
+            string comandaRecuperada = historial[numero - 1];
+
+            if (string.IsNullOrWhiteSpace(comandaRecuperada))
+            {
+                Console.WriteLine("No hi ha cap comanda en aquesta posicio.");
+                BeepError();
+                return;
+            }
+
+            Console.WriteLine("Executant: " + comandaRecuperada);
+            ExecutarComanda(comandaRecuperada, true);
+        }
+
         // ================= AUDIO =================
 
         private void BeepInici()
@@ -167,29 +256,35 @@ namespace MG_OS
         private void MostrarAjuda()
         {
             Console.WriteLine("Comandes disponibles:");
-            Console.WriteLine("ajuda        - Mostra aquesta ajuda");
-            Console.WriteLine("versio       - Mostra la versio del sistema");
-            Console.WriteLine("net          - Neteja la pantalla");
-            Console.WriteLine("diu [text]   - Escriu text per pantalla");
-            Console.WriteLine("llista       - Mostra fitxers i directoris");
-            Console.WriteLine("crea [dir]   - Crea un directori");
-            Console.WriteLine("entra [dir]  - Entra en un directori");
-            Console.WriteLine("borra [dir]  - Esborra un directori buit");
-            Console.WriteLine("mostra [fit] - Mostra el contingut d'un fitxer");
-            Console.WriteLine("suma a b     - Suma dos nombres");
-            Console.WriteLine("resta a b    - Resta dos nombres");
-            Console.WriteLine("mult a b     - Multiplica dos nombres");
-            Console.WriteLine("div a b      - Divideix dos nombres");
-            Console.WriteLine("mod a b      - Calcula el modul");
-            Console.WriteLine("arrel x      - Calcula l'arrel quadrada");
-            Console.WriteLine("apaga        - Apaga el sistema");
-            Console.WriteLine("reinicia     - Reinicia el sistema");
+            Console.WriteLine("ajuda          - Mostra aquesta ajuda");
+            Console.WriteLine("versio         - Mostra la versio del sistema");
+            Console.WriteLine("net            - Neteja la pantalla");
+            Console.WriteLine("diu [text]     - Escriu text per pantalla");
+            Console.WriteLine("historial      - Mostra les ultimes 5 comandes");
+            Console.WriteLine("repeteix [n]   - Torna a executar una comanda anterior");
+            Console.WriteLine("llista         - Mostra fitxers i directoris");
+            Console.WriteLine("crea [dir]     - Crea un directori");
+            Console.WriteLine("entra [dir]    - Entra en un directori");
+            Console.WriteLine("borra [dir]    - Esborra un directori buit");
+            Console.WriteLine("mostra [fit]   - Mostra el contingut d'un fitxer");
+            Console.WriteLine("suma a b       - Suma dos nombres");
+            Console.WriteLine("resta a b      - Resta dos nombres");
+            Console.WriteLine("mult a b       - Multiplica dos nombres");
+            Console.WriteLine("div a b        - Divideix dos nombres");
+            Console.WriteLine("mod a b        - Calcula el modul");
+            Console.WriteLine("arrel x        - Calcula l'arrel quadrada");
+            Console.WriteLine("apaga          - Apaga el sistema");
+            Console.WriteLine("reinicia       - Reinicia el sistema");
         }
 
         private string RutaCompleta(string nom)
         {
-            if (nom == "..") return nom;
-            if (nom.Contains(@":\")) return nom;
+            if (nom == "..")
+                return nom;
+
+            if (nom.Contains(@":\"))
+                return nom;
+
             return directoriActual + nom;
         }
 
@@ -199,6 +294,8 @@ namespace MG_OS
             {
                 string[] directoris = Directory.GetDirectories(directoriActual);
                 string[] fitxers = Directory.GetFiles(directoriActual);
+
+                Console.WriteLine("Contingut de " + directoriActual);
 
                 foreach (string dir in directoris)
                     Console.WriteLine("[DIR]  " + dir);
@@ -217,12 +314,17 @@ namespace MG_OS
 
         private void CrearDirectori(string[] parts)
         {
-            if (parts.Length != 2) return;
+            if (parts.Length != 2)
+            {
+                Console.WriteLine("Format correcte: crea nom_directori");
+                return;
+            }
 
             try
             {
-                Directory.CreateDirectory(RutaCompleta(parts[1]));
-                Console.WriteLine("Directori creat.");
+                string ruta = RutaCompleta(parts[1]);
+                Directory.CreateDirectory(ruta);
+                Console.WriteLine("Directori creat: " + ruta);
             }
             catch
             {
@@ -232,23 +334,35 @@ namespace MG_OS
 
         private void CanviarDirectori(string[] parts)
         {
-            if (parts.Length != 2) return;
+            if (parts.Length != 2)
+            {
+                Console.WriteLine("Format correcte: entra nom_directori");
+                return;
+            }
 
             try
             {
                 if (parts[1] == "..")
                 {
-                    if (directoriActual != @"0:\")
-                        directoriActual = @"0:\";
+                    directoriActual = @"0:\";
+                    Console.WriteLine("Directori actual: " + directoriActual);
                     return;
                 }
 
-                string ruta = RutaCompleta(parts[1]) + @"\";
+                string ruta = RutaCompleta(parts[1]);
+
+                if (!ruta.EndsWith(@"\"))
+                    ruta += @"\";
 
                 if (Directory.Exists(ruta))
+                {
                     directoriActual = ruta;
+                    Console.WriteLine("Directori actual: " + directoriActual);
+                }
                 else
-                    Console.WriteLine("No existeix.");
+                {
+                    Console.WriteLine("Error: el directori no existeix.");
+                }
             }
             catch
             {
@@ -258,12 +372,17 @@ namespace MG_OS
 
         private void EsborrarDirectori(string[] parts)
         {
-            if (parts.Length != 2) return;
+            if (parts.Length != 2)
+            {
+                Console.WriteLine("Format correcte: borra nom_directori");
+                return;
+            }
 
             try
             {
-                Directory.Delete(RutaCompleta(parts[1]));
-                Console.WriteLine("Directori esborrat.");
+                string ruta = RutaCompleta(parts[1]);
+                Directory.Delete(ruta);
+                Console.WriteLine("Directori esborrat: " + ruta);
             }
             catch
             {
@@ -273,11 +392,16 @@ namespace MG_OS
 
         private void MostrarFitxer(string[] parts)
         {
-            if (parts.Length != 2) return;
+            if (parts.Length != 2)
+            {
+                Console.WriteLine("Format correcte: mostra nom_fitxer");
+                return;
+            }
 
             try
             {
-                Console.WriteLine(File.ReadAllText(RutaCompleta(parts[1])));
+                string ruta = RutaCompleta(parts[1]);
+                Console.WriteLine(File.ReadAllText(ruta));
             }
             catch
             {
@@ -285,34 +409,74 @@ namespace MG_OS
             }
         }
 
+        // ================= MATEMATIQUES =================
+
         private void OperacioDosNombres(string[] parts, string tipus)
         {
-            if (parts.Length != 3) return;
+            if (parts.Length != 3)
+            {
+                Console.WriteLine("Format correcte: comanda nombre nombre");
+                return;
+            }
 
             if (!double.TryParse(parts[1], out double a) ||
                 !double.TryParse(parts[2], out double b))
+            {
+                Console.WriteLine("Has d'introduir nombres valids.");
                 return;
+            }
 
             switch (tipus)
             {
-                case "+": Console.WriteLine(a + b); break;
-                case "-": Console.WriteLine(a - b); break;
-                case "*": Console.WriteLine(a * b); break;
-                case "/":
-                    if (b != 0) Console.WriteLine(a / b);
+                case "+":
+                    Console.WriteLine("Resultat: " + (a + b));
                     break;
+
+                case "-":
+                    Console.WriteLine("Resultat: " + (a - b));
+                    break;
+
+                case "*":
+                    Console.WriteLine("Resultat: " + (a * b));
+                    break;
+
+                case "/":
+                    if (b == 0)
+                        Console.WriteLine("Error: no es pot dividir per zero.");
+                    else
+                        Console.WriteLine("Resultat: " + (a / b));
+                    break;
+
                 case "%":
-                    if (b != 0) Console.WriteLine(a % b);
+                    if (b == 0)
+                        Console.WriteLine("Error: no es pot fer modul amb zero.");
+                    else
+                        Console.WriteLine("Resultat: " + (a % b));
                     break;
             }
         }
 
         private void ArrelQuadrada(string[] parts)
         {
-            if (parts.Length != 2) return;
+            if (parts.Length != 2)
+            {
+                Console.WriteLine("Format correcte: arrel nombre");
+                return;
+            }
 
-            if (double.TryParse(parts[1], out double x) && x >= 0)
-                Console.WriteLine(Math.Sqrt(x));
+            if (!double.TryParse(parts[1], out double x))
+            {
+                Console.WriteLine("Has d'introduir un nombre valid.");
+                return;
+            }
+
+            if (x < 0)
+            {
+                Console.WriteLine("Error: no es pot calcular l'arrel d'un nombre negatiu.");
+                return;
+            }
+
+            Console.WriteLine("Resultat: " + Math.Sqrt(x));
         }
     }
 }
