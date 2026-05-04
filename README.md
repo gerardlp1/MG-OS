@@ -170,28 +170,35 @@ Mostra les ultimes cinc comandes executades.
 historial
 ```
 
+## 🎨 Interfície gràfica amb Cosmos CGS
+
+MG-OS ha evolucionat d’una consola simple a una interfície gràfica utilitzant Cosmos Graphic Subsystem (CGS).
+
+S’ha implementat un sistema visual basat en canvas que permet dibuixar elements gràfics com:
+
+- Fons amb colors personalitzats
+- Finestres i contenidors amb rectangles
+- Text renderitzat sobre pantalla
+- Interfície estructurada (header, sortida, input)
+
+Guia oficial utilitzada:
+https://cosmosos.github.io/articles/Kernel/CGS.html
+
 ## 🧪 Estat del projecte
 
 🚧 En desenvolupament
 
 ### Funcionalitats actuals
 
-- Arrencada basica del sistema  
-- Sortida per consola  
-- Estructura inicial del kernel  
-- Sistema basic de comandes (shell)  
-- Comanda d'apagat del sistema  
-- Comanda de reinici del sistema  
-- Operacions aritmetiques basiques des del terminal  
-- Sistema de fitxers inicial (llista, crea, entra, borra, mostra)  
-- Configuracio del teclat amb distribucio espanyola/europea  
-- Sistema de so amb PC Speaker:
-  - So d'inici del sistema  
-  - So en comandes correctes  
-  - So en errors  
-- Comanda `net` per netejar la pantalla  
-- Memoria de les ultimes cinc comandes executades  
-- Recuperacio i reexecucio de comandes anteriors  
+- Arrencada del sistema  
+- Interfície gràfica amb Cosmos CGS  
+- Sistema de comandes (shell)  
+- Input en temps real  
+- Sistema de fitxers bàsic  
+- Operacions aritmètiques  
+- Historial de comandes  
+- Sistema de so (beeps)  
+- Apagat i reinici del sistema  
 
 ### Millores previstes
 
