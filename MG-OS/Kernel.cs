@@ -119,7 +119,7 @@ namespace MG_OS
             canvas.DrawRectangle(Color.FromArgb(30, 80, 120), 35, 35, 730, 55);
             canvas.DrawString("MG-OS", PCScreenFont.Default, Color.White, 55, 55);
             canvas.DrawString("Ruta: " + directoriActual, PCScreenFont.Default, Color.LightCyan, 260, 55);
-            canvas.DrawString("Versio 0.1", PCScreenFont.Default, Color.LightGray, 650, 55);
+            canvas.DrawString("Versio 1.0", PCScreenFont.Default, Color.LightGray, 650, 55);
 
             canvas.DrawRectangle(Color.FromArgb(12, 20, 35), 35, 110, 730, 380);
             canvas.DrawString("Sortida del sistema:", PCScreenFont.Default, Color.Yellow, 50, 125);
@@ -181,7 +181,7 @@ namespace MG_OS
                     break;
 
                 case "versio":
-                    AfegirSortida("MG-OS versio 0.1");
+                    AfegirSortida("MG-OS versio 1.0");
                     AfegirSortida("Desenvolupat per Manel Sanchez i Gerard Leiva");
                     break;
 

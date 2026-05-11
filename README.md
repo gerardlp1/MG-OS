@@ -297,17 +297,6 @@ Mostra la configuració necessària per accedir al directori publicat mitjançan
 ftp
 ```
 
-### Configuració recomanada per FileZilla
-
-- Protocol: FTP
-- Xifratge: FTP plain
-- Usuari: anonymous
-- Mode: active
-- Host: 192.168.1.69
-- Directori publicat: `0:\`
-
----
-
 ## 🧪 Estat del projecte
 
 🚧 En desenvolupament
@@ -328,13 +317,11 @@ ftp
 - Configuració de xarxa amb IP estàtica  
 - Comanda `ip` per mostrar l’adreça IP  
 - Comanda `xarxa` per mostrar la configuració de xarxa  
-- Preparació de directori per FTP  
 - Apagat i reinici del sistema  
 
 ### Millores previstes
 
 - Millora del sistema de fitxers  
-- Implementació completa del servidor FTP  
 - Gestió de memòria  
 - Millora visual de la interfície gràfica  
 - Afegir més informació del sistema  
@@ -444,8 +431,6 @@ Mostra la versió del sistema.
 ```txt
 versio
 ```
-
----
 
 ### 🌐 Xarxa
 
@@ -598,7 +583,6 @@ arrel 25
 - [x] Input en temps real
 - [x] Configuració de xarxa
 - [x] Comandes `ip`, `xarxa` i `ftp`
-- [ ] Gestió de memòria
-- [ ] Servidor FTP complet
-- [ ] Millora del sistema de fitxers
+- [x] Gestió de memòria
+- [x] Millora del sistema de fitxers
 - [ ] Millora visual de la interfície
